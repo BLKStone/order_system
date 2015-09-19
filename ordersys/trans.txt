@@ -1,0 +1,14 @@
+BEGIN;
+CREATE TABLE "ordersys_employee" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "password" varchar(10) NOT NULL, "emp_type" integer NOT NULL);
+CREATE TABLE "ordersys_order" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "time" datetime NOT NULL, "desk_id" integer NOT NULL, "total_price" real NOT NULL, "state" integer NOT NULL, "employee_id" integer NOT NULL REFERENCES "ordersys_employee" ("id"));
+CREATE TABLE "ordersys_order_tea" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "number" integer NOT NULL, "order_id" integer NOT NULL REFERENCES "ordersys_order" ("id"));
+CREATE TABLE "ordersys_tea" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "price" real NOT NULL);
+CREATE TABLE "ordersys_order_tea__new" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "number" integer NOT NULL, "order_id" integer NOT NULL REFERENCES "ordersys_order" ("id"), "tea_id" integer NOT NULL REFERENCES "ordersys_tea" ("id"));
+INSERT INTO "ordersys_order_tea__new" ("order_id", "tea_id", "id", "number") SELECT "order_id", NULL, "id", "number" FROM "ordersys_order_tea";
+DROP TABLE "ordersys_order_tea";
+ALTER TABLE "ordersys_order_tea__new" RENAME TO "ordersys_order_tea";
+CREATE INDEX "ordersys_order_dcc97e32" ON "ordersys_order" ("employee_id");
+CREATE INDEX "ordersys_order_tea_69dfcb07" ON "ordersys_order_tea" ("order_id");
+CREATE INDEX "ordersys_order_tea_9f15d46b" ON "ordersys_order_tea" ("tea_id");
+
+COMMIT;

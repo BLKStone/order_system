@@ -1,0 +1,63 @@
+BEGIN;
+CREATE TABLE "order_manager" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "password" varchar(10) NOT NULL);
+CREATE TABLE "order_order" ("order_id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "time" datetime NOT NULL, "desk_id" integer NOT NULL, "total_price" real NOT NULL, "state" integer NOT NULL, "m_id_id" integer NOT NULL REFERENCES "order_manager" ("id"));
+CREATE TABLE "order_order_tea" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "number" integer NOT NULL, "order_id_id" integer NOT NULL REFERENCES "order_order" ("order_id"));
+CREATE TABLE "order_tea" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "price" real NOT NULL);
+CREATE TABLE "order_waiter" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "password" varchar(10) NOT NULL);
+CREATE TABLE "order_order_tea__new" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "number" integer NOT NULL, "order_id_id" integer NOT NULL REFERENCES "order_order" ("order_id"), "tea_id_id" integer NOT NULL REFERENCES "order_tea" ("id"));
+INSERT INTO "order_order_tea__new" ("tea_id_id", "order_id_id", "id", "number") SELECT NULL, "order_id_id", "id", "number" FROM "order_order_tea";
+DROP TABLE "order_order_tea";
+ALTER TABLE "order_order_tea__new" RENAME TO "order_order_tea";
+CREATE INDEX "order_order_8dfc5e9b" ON "order_order" ("m_id_id");
+CREATE INDEX "order_order_tea_564fd3cf" ON "order_order_tea" ("order_id_id");
+CREATE INDEX "order_order_tea_f01f5f3b" ON "order_order_tea" ("tea_id_id");
+CREATE TABLE "order_order__new" ("order_id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "time" datetime NOT NULL, "desk_id" integer NOT NULL, "total_price" real NOT NULL, "state" integer NOT NULL, "m_id_id" integer NOT NULL REFERENCES "order_manager" ("id"), "w_id_id" integer NOT NULL REFERENCES "order_waiter" ("id"));
+INSERT INTO "order_order__new" ("total_price", "w_id_id", "m_id_id", "order_id", "state", "desk_id", "time") SELECT "total_price", NULL, "m_id_id", "order_id", "state", "desk_id", "time" FROM "order_order";
+DROP TABLE "order_order";
+ALTER TABLE "order_order__new" RENAME TO "order_order";
+CREATE INDEX "order_order_8dfc5e9b" ON "order_order" ("m_id_id");
+CREATE INDEX "order_order_db9ed172" ON "order_order" ("w_id_id");
+
+COMMIT;
+
+
+BEGIN;
+CREATE TABLE "order_order__new" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "time" datetime NOT NULL, "desk_id" integer NOT NULL, "total_price" real NOT NULL, "state" integer NOT NULL, "m_id_id" integer NOT NULL REFERENCES "order_manager" ("id"), "w_id_id" integer NOT NULL REFERENCES "order_waiter" ("id"));
+INSERT INTO "order_order__new" ("total_price", "w_id_id", "m_id_id", "state", "desk_id", "time", "id") SELECT "total_price", "w_id_id", "m_id_id", "state", "desk_id", "time", "order_id" FROM "order_order";
+DROP TABLE "order_order";
+ALTER TABLE "order_order__new" RENAME TO "order_order";
+CREATE INDEX "order_order_8dfc5e9b" ON "order_order" ("m_id_id");
+CREATE INDEX "order_order_db9ed172" ON "order_order" ("w_id_id");
+CREATE TABLE "order_order_tea__new" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "number" integer NOT NULL, "tea_id_id" integer NOT NULL REFERENCES "order_tea" ("id"), "order_id" integer NOT NULL REFERENCES "order_order" ("id"));
+INSERT INTO "order_order_tea__new" ("order_id", "tea_id_id", "id", "number") SELECT "order_id_id", "tea_id_id", "id", "number" FROM "order_order_tea";
+DROP TABLE "order_order_tea";
+ALTER TABLE "order_order_tea__new" RENAME TO "order_order_tea";
+CREATE INDEX "order_order_tea_f01f5f3b" ON "order_order_tea" ("tea_id_id");
+CREATE INDEX "order_order_tea_69dfcb07" ON "order_order_tea" ("order_id");
+CREATE TABLE "order_order_tea__new" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "number" integer NOT NULL, "order_id" integer NOT NULL REFERENCES "order_order" ("id"), "tea_id" integer NOT NULL REFERENCES "order_tea" ("id"));
+INSERT INTO "order_order_tea__new" ("order_id", "tea_id", "id", "number") SELECT "order_id", "tea_id_id", "id", "number" FROM "order_order_tea";
+DROP TABLE "order_order_tea";
+ALTER TABLE "order_order_tea__new" RENAME TO "order_order_tea";
+CREATE INDEX "order_order_tea_69dfcb07" ON "order_order_tea" ("order_id");
+CREATE INDEX "order_order_tea_9f15d46b" ON "order_order_tea" ("tea_id");
+
+COMMIT;
+
+
+BEGIN;
+CREATE TABLE "order_order__new" ("manager_id" integer NOT NULL REFERENCES "order_manager" ("id"), "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "time" datetime NOT NULL, "desk_id" integer NOT NULL, "total_price" real NOT NULL, "state" integer NOT NULL, "w_id_id" integer NOT NULL REFERENCES "order_waiter" ("id"));
+INSERT INTO "order_order__new" ("total_price", "w_id_id", "desk_id", "state", "manager_id", "time", "id") SELECT "total_price", "w_id_id", "desk_id", "state", "m_id_id", "time", "id" FROM "order_order";
+DROP TABLE "order_order";
+ALTER TABLE "order_order__new" RENAME TO "order_order";
+CREATE INDEX "order_order_8784215c" ON "order_order" ("manager_id");
+CREATE INDEX "order_order_db9ed172" ON "order_order" ("w_id_id");
+CREATE TABLE "order_order__new" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "time" datetime NOT NULL, "desk_id" integer NOT NULL, "total_price" real NOT NULL, "state" integer NOT NULL, "manager_id" integer NOT NULL REFERENCES "order_manager" ("id"), "waiter_id" integer NOT NULL REFERENCES "order_waiter" ("id"));
+INSERT INTO "order_order__new" ("total_price", "desk_id", "waiter_id", "state", "manager_id", "time", "id") SELECT "total_price", "desk_id", "w_id_id", "state", "manager_id", "time", "id" FROM "order_order";
+DROP TABLE "order_order";
+ALTER TABLE "order_order__new" RENAME TO "order_order";
+CREATE INDEX "order_order_8784215c" ON "order_order" ("manager_id");
+CREATE INDEX "order_order_fb49ce7b" ON "order_order" ("waiter_id");
+
+COMMIT;
+
+

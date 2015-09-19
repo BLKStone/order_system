@@ -1,0 +1,113 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="wdith=device-width,initial-scale=1">
+    <title></title>
+     <!-- Bootstrap core CSS -->
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="http://v3.bootcss.com/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="http://v3.bootcss.com/examples/theme/theme.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 50px;
+        }
+
+        .starter{
+            padding: 40px 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="{% url 'mainpage'%}" class="navbar-brand">点茶系统</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'mainpage'%}">主页</a></li>
+                    <li><a href="{% url 'ordersys:order' %}">开始点茶</a></li>
+                    <li class="active"><a href="{% url 'ordersys:unfinorder' %}">未完成订单</a></li>
+                    <li><a href="{% url 'ordersys:finorder' %}">已完成订单</a></li>
+                    <li><a href="{% url 'ordersys:stat' %}">今日销量</a></li>
+                    <li><a href="{% url 'ordersys:statweek' %}">本周销量</a></li>
+                    <li><a href="{% url 'about' %}">关于本站</a> </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+        <div class="container">
+        <div class="starter">
+            <h1>未完成订单</h1>
+        </div>
+        <a href="{%url 'ordersys:order'%}">返回</a>
+    </div>
+
+            <div class="container">
+        <form class="form-inline" action="{% url 'ordersys:endorder'%}" method="post">
+            <div class="form-group">
+                <label for="exampleInputEmail2">订单号</label>
+                <input type="text" name="order_id" class="form-control" id="exampleInputEmail2" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-default">结帐</button>
+        </br>
+        </form>
+    </div>
+
+                <div class="container">
+        <form class="form-inline" action="{% url 'ordersys:endorder'%}" method="post">
+            <div class="form-group">
+                <label for="exampleInputEmail2">订单号</label>
+                <input type="text" name="order_id" class="form-control" id="exampleInputEmail2" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-default">撤销订单</button>
+        </br>
+        </form>
+    </div>
+
+    {% for order in order_list %}
+        <div class="container">
+        <table class="table table-bordered" >
+              <tbody >
+                <tr>
+                    <td colspan="1">订单号</td>
+                    <td colspan="2">{{ order.id }}</td>
+                    <td colspan="1">下单时间</td>
+                    <td colspan="2">{{ order.time }}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="1">桌号</td>
+                    <td colspan="1">{{ order.desk_id }}</td>
+                    <td colspan="1">总价</td>
+                    <td colspan="1">{{ order.total_price }}</td>
+                    <td colspan="1">处理员工</td>
+                    <td colspan="1">{{ order.employee.id }}</td>
+                </tr>
+
+                {% for item in order_tea_list %}
+                {% if item.order.id == order.id %}
+                <tr>
+                    <td colspan="1">名称</td>
+                    <td colspan="1">{{ item.tea.name }}</td>
+                    <td colspan="1">单价</td>
+                    <td colspan="1">{{ item.tea.price }}</td>
+                    <td colspan="1">数量</td>
+                    <td colspan="1">{{ item.number }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>                    
+    {% endfor %}
+
+</body>
+</html>
